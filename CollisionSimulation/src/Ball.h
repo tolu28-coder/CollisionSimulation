@@ -12,12 +12,13 @@ public:
 	Ball( glm::vec3 position, glm::vec3 velocity, float radius);
 	~Ball();
 
-	glm::mat4 GetTranslationMatrix();
+	glm::mat4 GetMatrix();
 	void Update(float duration);
 
 	
 
 protected:
+	glm::mat4 m_ScaleMatrix;
 	glm::vec3 m_Position;
 	glm::vec3 m_Velocity;
 	float m_Radius;

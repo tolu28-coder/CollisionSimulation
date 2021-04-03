@@ -5,62 +5,14 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <math.h>
+//#include <math.h>
 #include "Container.h"
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_glfw.h"
 #include "ImGUI/imgui_impl_opengl3.h"
 
 
-float pi = atan(1) * 4;
 
-struct Circle {
-  float* Position;
-  unsigned int* Index;
-};
-
-Circle CreateCircle(float radius, int division) {
-  float* position = new float[(division + 1) * 2];
-  unsigned int* index = new unsigned int[division * 3];
-
-  float divisionAngle = ((2 * pi) / division);
-
-  position[0] = 0.0f;
-  position[1] = 0.0f;
-
-  float x = 0.0f;
-  float y = radius;
-
-
-  for (int i = 0; i < division; i++) {
-
-    position[(2 * i) + 2] = x;
-    position[(2 * i) + 3] = y;
-
-    float xnew = (x * cos(divisionAngle)) - (y * sin(divisionAngle));
-    float ynew = (x * sin(divisionAngle)) + (y * cos(divisionAngle));
-
-    x = xnew;
-    y = ynew;
-  }
-
-  for (int i = 0; i < division; i++) {
-    if (i != (division - 1)) {
-      index[3 * i] = 0;
-      index[(3 * i) + 1] = i + 1;
-      index[(3 * i) + 2] = i + 2;
-    }
-    else {
-      index[3 * i] = 0;
-      index[(3 * i) + 1] = i + 1;
-      index[(3 * i) + 2] = 1;
-    }
-  }
-
-
-  return { position,index };
-
-}
 
 int main(void)
 {
@@ -90,25 +42,8 @@ int main(void)
 
 
   {
-    float division = 180;
-    Circle circle = CreateCircle(20, division);
-    float* positions = circle.Position;
-    unsigned int* indices = circle.Index;
-    GLCall(glEnable(GL_BLEND));
-    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-    VertexArray va;
-    VertexBuffer vb = VertexBuffer(positions, (division+1) * 2 * sizeof(float));
-    IndexBuffer ib = IndexBuffer(indices, 3*division);
-    VertexBufferLayout layout;
 
-
-    layout.Push<float>(2);
-    va.AddBuffer(vb, layout);
-
-    Shader shader = Shader("res/shaders/Basic.shader");
-    Renderer renderer;
-
-    Container simulation = Container(1800, 1000, &vb, &va, &ib, &renderer, &shader, layout, 60);
+    Container simulation = Container(1800, 1000, 60);
 
     for (int i = 0; i < 12; i++) {
 
@@ -124,7 +59,7 @@ int main(void)
                                     25 -(((i+1) % 2) * 50),
                                      0        );
 
-      Ball ball = Ball(ballPos, ballVel, 20);
+      Ball ball = Ball(ballPos, ballVel, 20 -i);
 
       simulation.AddBall(ball);
 
@@ -154,7 +89,7 @@ int main(void)
       ImGui::NewFrame();
 
       simulation.Draw();
-      shader.SetUniform4f("u_Color", colour.x, colour.y, colour.z, 1.0);
+      simulation.SetUniform4f("u_Color", colour.x, colour.y, colour.z, 1.0);
       
 
       static float f = 0.0f;

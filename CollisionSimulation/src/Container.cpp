@@ -1,17 +1,31 @@
 #include "Container.h"
 
-Container::Container(float xRange, float yRange, VertexBuffer* vb, VertexArray* va,
-                      IndexBuffer* ib, Renderer* renderer,Shader* shader, VertexBufferLayout &layout,float frameRate) 
-                      : m_SharedVertexBuffer(vb),m_SharedIndexBuffer(ib), m_Left(xRange/2),
-                      m_Right(-xRange / 2), m_Top(yRange / 2), m_Bottom(-yRange / 2), m_Renderer(renderer), 
-                      m_Shader(shader),m_SharedVertexArray(va) , m_Duration(1/frameRate)
+Container::Container(float xRange, float yRange,float frameRate, int circleDivision)
+                      : m_Left(xRange/2),m_Right(-xRange / 2), m_Top(yRange / 2), m_Bottom(-yRange / 2) ,
+                        m_Duration(1/frameRate),m_SharedVertexArray(),m_Shader("res/shaders/Basic.shader"),
+                        m_Renderer()
 {
+  Circle circle = CreateCircle(1, circleDivision);
+  float* positions = circle.Position;
+  unsigned int* indices = circle.Index;
+
+
+  m_SharedVertexBuffer = VertexBuffer(positions, (circleDivision + 1) * 2 * sizeof(float));
+  m_SharedIndexBuffer = IndexBuffer(indices, 3 * circleDivision);
+  VertexBufferLayout layout;
+
+
+  layout.Push<float>(2);
+  m_SharedVertexArray.AddBuffer(m_SharedVertexBuffer, layout);
+
+  //m_Shader = Shader("res/shaders/Basic.shader");
+  //m_Renderer = Renderer();
   m_Projection = glm::ortho(m_Left, m_Right, m_Bottom, m_Top);
-  m_Shader->Bind();
-  m_SharedVertexBuffer->Bind();
-  m_SharedIndexBuffer->Bind();
-  m_SharedVertexArray->Bind();
-  m_SharedVertexArray->AddBuffer(*m_SharedVertexBuffer, layout);
+  m_Shader.Bind();
+  m_SharedVertexBuffer.Bind();
+  m_SharedIndexBuffer.Bind();
+  m_SharedVertexArray.Bind();
+  m_SharedVertexArray.AddBuffer(m_SharedVertexBuffer, layout);
 
 }
 
@@ -87,11 +101,12 @@ void Container::Draw() {
   this->CheckCollisions();
   this->CheckOutOfBounds();
   glm::mat4 mvp;
-  m_Renderer->Clear();
+  m_Renderer.Clear();
   for (const Ball& ball : m_BallObjects) {
-    mvp = m_Projection * glm::translate(glm::mat4(1.0f), ball.m_Position);
-    m_Shader->SetUniformMat4f("u_MVP",mvp);
-    m_Renderer->Draw(*m_SharedVertexArray, *m_SharedIndexBuffer, *m_Shader);
+    glm::mat4 mv =  glm::translate(glm::mat4(1.0f), ball.m_Position) * ball.m_ScaleMatrix;
+    mvp = m_Projection * mv;
+    m_Shader.SetUniformMat4f("u_MVP",mvp);
+    m_Renderer.Draw(m_SharedVertexArray, m_SharedIndexBuffer, m_Shader);
   }
  
 }
@@ -109,4 +124,9 @@ void Container::AddBalls(std::vector<Ball>& ballObjects) {
     m_BallObjects.push_back(ball);
   }
 
+}
+
+void Container::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
+
+  m_Shader.SetUniform4f(name, v0, v1, v2, v3);
 }
