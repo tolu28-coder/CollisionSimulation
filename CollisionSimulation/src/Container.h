@@ -10,12 +10,12 @@
 #include <vector>
 #include "Shader.h"
 #include <iostream>
+#include "Utilities.h"
 
 class Container
 {
 public:
-	Container(float xRange,float yRange,VertexBuffer* vb, VertexArray* va, IndexBuffer* ib, Renderer* renderer,
-						Shader* shader, VertexBufferLayout &layout, float frameRate);
+	Container(float xRange,float yRange, float frameRate,int circleDivision = 180);
 	~Container();
 	
 	void AddBall(Ball &ballObject);
@@ -27,13 +27,14 @@ public:
 	void CheckCollisions();
 	void Draw();
 	void Update();
+	void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
 
 private:
-	VertexBuffer* m_SharedVertexBuffer;
-	IndexBuffer* m_SharedIndexBuffer;
-	VertexArray* m_SharedVertexArray;
-	Renderer* m_Renderer;
-	Shader* m_Shader;
+	VertexBuffer m_SharedVertexBuffer;
+	IndexBuffer m_SharedIndexBuffer;
+	VertexArray m_SharedVertexArray;
+	Renderer m_Renderer;
+	Shader m_Shader;
 	glm::mat4 m_Projection;
 	float m_Left;
 	float m_Right;
