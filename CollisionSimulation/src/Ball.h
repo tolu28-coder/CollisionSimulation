@@ -12,7 +12,7 @@ public:
 	Ball( glm::vec3 position, glm::vec3 velocity, float radius);
 	~Ball();
 
-	glm::mat4 GetMatrix();
+	const glm::mat4 GetMatrix();
 	void Update(float duration);
 
 	

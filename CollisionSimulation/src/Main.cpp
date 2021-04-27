@@ -42,6 +42,8 @@ int main(void)
 
 
   {
+    GLCall(glEnable(GL_BLEND));
+    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     Container simulation = Container(1800, 1000, 60);
 
