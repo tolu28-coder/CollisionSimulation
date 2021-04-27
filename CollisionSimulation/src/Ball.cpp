@@ -18,7 +18,8 @@ void Ball::Update(float duration) {
 
 }
 
-glm::mat4 Ball::GetMatrix() {
-  glm::mat4 matrix = m_ScaleMatrix * glm::translate(glm::mat4(1.0f), m_Position);
-  return matrix;
+const glm::mat4 Ball::GetMatrix() {
+  //glm::mat4 matrix = m_ScaleMatrix * glm::translate(glm::mat4(1.0f), m_Position);
+  //return matrix;
+  return m_ScaleMatrix * glm::translate(glm::mat4(1.0f), m_Position);
 }

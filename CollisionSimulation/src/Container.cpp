@@ -9,17 +9,16 @@ Container::Container(float xRange, float yRange,float frameRate, int circleDivis
   float* positions = circle.Position;
   unsigned int* indices = circle.Index;
 
-
+  //m_SharedVertexArray = VertexArray();
   m_SharedVertexBuffer = VertexBuffer(positions, (circleDivision + 1) * 2 * sizeof(float));
   m_SharedIndexBuffer = IndexBuffer(indices, 3 * circleDivision);
-  VertexBufferLayout layout;
+  //m_Shader = Shader("res/shaders/Basic.shader");
+  //m_Renderer = Renderer();
+  VertexBufferLayout layout = VertexBufferLayout();
 
 
   layout.Push<float>(2);
   m_SharedVertexArray.AddBuffer(m_SharedVertexBuffer, layout);
-
-  //m_Shader = Shader("res/shaders/Basic.shader");
-  //m_Renderer = Renderer();
   m_Projection = glm::ortho(m_Left, m_Right, m_Bottom, m_Top);
   m_Shader.Bind();
   m_SharedVertexBuffer.Bind();
@@ -101,10 +100,11 @@ void Container::Draw() {
   this->CheckCollisions();
   this->CheckOutOfBounds();
   glm::mat4 mvp;
-  m_Renderer.Clear();
+  //m_Renderer.Clear();
   for (const Ball& ball : m_BallObjects) {
-    glm::mat4 mv =  glm::translate(glm::mat4(1.0f), ball.m_Position) * ball.m_ScaleMatrix;
-    mvp = m_Projection * mv;
+    //glm::mat4 mv = ball.GetMatrix();
+    glm::mat4 mv = glm::translate(glm::mat4(1.0f), ball.m_Position);
+    mvp = m_Projection *mv;
     m_Shader.SetUniformMat4f("u_MVP",mvp);
     m_Renderer.Draw(m_SharedVertexArray, m_SharedIndexBuffer, m_Shader);
   }

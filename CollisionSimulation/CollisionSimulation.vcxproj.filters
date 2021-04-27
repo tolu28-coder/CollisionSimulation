@@ -924,6 +924,9 @@
     <ClInclude Include="src\VertexBufferLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Utilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\vendor\glm\detail\func_common.inl">
@@ -1398,6 +1401,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\VertexBufferLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
