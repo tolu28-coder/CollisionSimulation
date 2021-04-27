@@ -9,7 +9,7 @@
 class Ball
 {
 public:
-	Ball( glm::vec3 position, glm::vec3 velocity, float radius);
+	Ball( glm::vec3 position, glm::vec3 velocity, float radius, float mass);
 	~Ball();
 
 	const glm::mat4 GetMatrix();
@@ -22,7 +22,7 @@ protected:
 	glm::vec3 m_Position;
 	glm::vec3 m_Velocity;
 	float m_Radius;
-	float m_Mass = 5;
+	float m_Mass;
 	friend class Container;
 
 };

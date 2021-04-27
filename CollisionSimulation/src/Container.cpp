@@ -2,18 +2,14 @@
 
 Container::Container(float xRange, float yRange,float frameRate, int circleDivision)
                       : m_Left(xRange/2),m_Right(-xRange / 2), m_Top(yRange / 2), m_Bottom(-yRange / 2) ,
-                        m_Duration(1/frameRate),m_SharedVertexArray(),m_Shader("res/shaders/Basic.shader"),
-                        m_Renderer()
+                        m_Duration(1/frameRate), m_SharedVertexArray(),m_Shader("res/shaders/Basic.shader"),
+                        m_Renderer(),m_SharedVertexBuffer(CreateCircle(1, circleDivision).Position, (circleDivision + 1) * 2 * sizeof(float)),
+                        m_SharedIndexBuffer(CreateCircle(1, circleDivision).Index, 3 * circleDivision)
 {
   Circle circle = CreateCircle(1, circleDivision);
   float* positions = circle.Position;
   unsigned int* indices = circle.Index;
 
-  //m_SharedVertexArray = VertexArray();
-  m_SharedVertexBuffer = VertexBuffer(positions, (circleDivision + 1) * 2 * sizeof(float));
-  m_SharedIndexBuffer = IndexBuffer(indices, 3 * circleDivision);
-  //m_Shader = Shader("res/shaders/Basic.shader");
-  //m_Renderer = Renderer();
   VertexBufferLayout layout = VertexBufferLayout();
 
 
@@ -43,23 +39,24 @@ void Container::CheckOutOfBounds() {
   for (Ball &ball : m_BallObjects) {
     glm::vec3& ballPos = ball.m_Position;
     glm::vec3& ballVel = ball.m_Velocity;
-    if (ballPos.x > m_Left) {
-      ballPos.x = m_Left - (ballPos.x - m_Left);
+    float radius = ball.m_Radius;
+    if (ballPos.x + radius > m_Left) {
+      ballPos.x -= 2 * (ballPos.x + radius - m_Left);
       ballVel.x *= -1;
     }
 
-    if (ballPos.x < m_Right) {
-      ballPos.x = m_Right - (ballPos.x - m_Right);
+    if (ballPos.x - radius < m_Right) {
+      ballPos.x -= 2 * (ballPos.x - radius - m_Right);
       ballVel.x *= -1;
     }
 
-    if (ballPos.y > m_Top) {
-      ballPos.y = m_Top - (ballPos.y - m_Top);
+    if (ballPos.y + radius > m_Top) {
+      ballPos.y -= 2 * (ballPos.y + radius - m_Top);
       ballVel.y *= -1;
     }
 
-    if (ballPos.y < m_Bottom) {
-      ballPos.y = m_Bottom - (ballPos.y - m_Bottom);
+    if (ballPos.y - radius < m_Bottom) {
+      ballPos.y -= 2 * (ballPos.y - radius - m_Bottom);
       ballVel.y *= -1;
     }
   }
@@ -100,11 +97,9 @@ void Container::Draw() {
   this->CheckCollisions();
   this->CheckOutOfBounds();
   glm::mat4 mvp;
-  //m_Renderer.Clear();
+  m_Renderer.Clear();
   for (const Ball& ball : m_BallObjects) {
-    //glm::mat4 mv = ball.GetMatrix();
-    glm::mat4 mv = glm::translate(glm::mat4(1.0f), ball.m_Position);
-    mvp = m_Projection *mv;
+    mvp =  m_Projection*glm::translate(glm::mat4(1.0f), ball.m_Position)* ball.m_ScaleMatrix;
     m_Shader.SetUniformMat4f("u_MVP",mvp);
     m_Renderer.Draw(m_SharedVertexArray, m_SharedIndexBuffer, m_Shader);
   }

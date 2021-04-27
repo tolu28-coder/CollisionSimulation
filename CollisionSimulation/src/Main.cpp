@@ -50,18 +50,18 @@ int main(void)
     for (int i = 0; i < 12; i++) {
 
       glm::vec3 ballPos = glm::vec3( (i*100)-600,
-                                     (i%2)*200,
+                                     RandomInt(-350, 350),
                                       0       );
       int sign = 1;
       if (i % 3 == 1) {
 
         sign = -1;
       }
-      glm::vec3 ballVel = glm::vec3(sign*((i * 5) +200),
-                                    25 -(((i+1) % 2) * 50),
+      glm::vec3 ballVel = glm::vec3(sign*RandomInt(-250, 250),
+                                    sign * RandomInt(-100, 100),
                                      0        );
-
-      Ball ball = Ball(ballPos, ballVel, 20 -i);
+      float radius = RandomInt(10, 50);
+      Ball ball = Ball(ballPos, ballVel, radius, radius*radius*radius);
 
       simulation.AddBall(ball);
 

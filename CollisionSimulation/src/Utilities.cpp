@@ -44,3 +44,9 @@ Circle CreateCircle(float radius, int division) {
   return { position,index };
 
 }
+
+int RandomInt(int min, int max) 
+{
+  int random = min + (std::rand() % ((max - min)));
+  return random;
+}
