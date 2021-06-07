@@ -21,5 +21,4 @@ This is a billard balls collision simulator implemented in C++ using Opengl
 - Need to improve Collision response.
 - If balls move fast enough then balls can pass through each other.
 - When a ball is between a wall and a ball can cause glitches.
-- Allow different sized spheres.
 ```
